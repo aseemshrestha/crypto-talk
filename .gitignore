@@ -23,6 +23,7 @@ dist/
 nbdist/
 .nb-gradle/
 
+
 *#
 *.iml
 *.ipr
@@ -46,12 +47,9 @@ nbdist/
 /code
 MANIFEST.MF
 _site/
-activemq-data
 bin
 build
 build.log
-dependency-reduced-pom.xml
-dump.rdb
 interpolated*.xml
 lib/
 manifest.yml
@@ -59,6 +57,19 @@ overridedb.*
 settings.xml
 target
 transaction-logs
-.flattened-pom.xml
 secrets.yml
-
+classpath
+.project
+.settings/
+ 
+# Intellij
+.idea/
+*.iml
+*.iws
+ 
+# Mac
+.DS_Store
+ 
+# Maven
+log/
+target/

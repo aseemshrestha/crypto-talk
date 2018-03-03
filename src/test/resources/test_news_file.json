@@ -1,0 +1,30 @@
+{
+	"status": "ok",
+	"totalResults": 1213,
+	"articles": [{
+			"source": {
+				"id": "cryptocoinsnews",
+				"name": "Crypto Coins News"
+			},
+			"author": "Gerelyn Terzo",
+			"title": "Traders Cheer as South Korea Backpedals on Cryptocurrency Trading Ban",
+			"description": "The post Traders Cheer as South Korea Backpedals on Cryptocurrency Trading Ban appeared first on CCN Apparently, you can fight City Hall. The South Korean government in response to a petition signed by hundreds of thousands of locals tipped its hand toward cr",
+			"url": "https://www.ccn.com/traderscheerassouthkoreabackpedalsoncryptotradingban/",
+			"urlToImage": "https://www.ccn.com/wpcontent/uploads/2018/01/SouthKoreacryptocurrency.jpg",
+			"publishedAt": "20180214T15:53:43Z"
+		},
+		{
+			"source": {
+				"id": "cryptocoinsnews",
+				"name": "Crypto Coins News"
+			},
+			"author": "Josiah Wilmoth",
+			"title": "Western Union Taps Ripple for Blockchain Trial",
+			"description": "The post Western Union Taps Ripple for Blockchain Trial appeared first on CCN's Western Union, the worlds largest money transfer service, has revealed that it is conducting a blockchainbased payments trial with Ripple. Western Union CFO Raj Agrawal confirmed",
+			"url": "https://www.ccn.com/westernuniontapsrippleforblockchaintrial/",
+			"urlToImage": "https://www.ccn.com/wpcontent/uploads/2016/03/WesternUnion.jpg",
+			"publishedAt": "20180214T15:02:24Z"
+		}
+		
+	]
+}
