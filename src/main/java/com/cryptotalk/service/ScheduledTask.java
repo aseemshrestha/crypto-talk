@@ -9,6 +9,7 @@ public class ScheduledTask extends TimerTask
     public void run()
     {
         NewsService.newsMap.clear();
+        QuoteService.quoteMap.clear();
     }
 
 }

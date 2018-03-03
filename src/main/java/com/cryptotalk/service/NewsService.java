@@ -1,9 +1,9 @@
 package com.cryptotalk.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 import com.cryptotalk.util.AppConfig;
@@ -23,18 +23,17 @@ public class NewsService
         this.config = Objects.requireNonNull(config);
     }
 
-    public Map<String, News> getNews()
+    public Optional<Map<String, News>> getNews()
     {
         try {
             if (newsMap.isEmpty()) {
                 newsMap.put("news", Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class));
             }
-            return newsMap;
 
         } catch (IOException e) {
             System.out.printf("Couldn't get news", e);
         }
-        return null;
+        return Optional.ofNullable(newsMap);
     }
 
     public Map<String, News> getNewsMap()

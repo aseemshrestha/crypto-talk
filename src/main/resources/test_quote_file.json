@@ -1,0 +1,45 @@
+[
+	{
+		"symbol_id": "LYKKE_SPOT_BTC_EUR",
+		"time_exchange": "2018-03-03T16:56:41.3214404Z",
+		"time_coinapi": "2018-03-03T16:56:41.3214404Z",
+		"ask_price": 9308.008,
+		"ask_size": 1.5805,
+		"bid_price": 9301.799,
+		"bid_size": 0.1
+	},
+	{
+		"symbol_id": "COINSECURE_SPOT_BTC_INR",
+		"time_exchange": "2018-03-03T16:56:54.8630000Z",
+		"time_coinapi": "2018-03-03T16:56:53.9163799Z",
+		"ask_price": 72499900,
+		"ask_size": 72900000,
+		"bid_price": 70650200,
+		"bid_size": 10000000,
+		"last_trade": {
+			"time_exchange": "2018-03-03T16:49:26.8670000Z",
+			"time_coinapi": "2018-03-03T16:49:33.5519749Z",
+			"uuid": "91b92a60-b571-4fe0-b338-2b186357518c",
+			"price": 724000,
+			"size": 0.451,
+			"taker_side": "SELL"
+		}
+	},
+	{
+		"symbol_id": "COINBASE_SPOT_BTC_EUR",
+		"time_exchange": "2018-03-03T16:56:55.4010435Z",
+		"time_coinapi": "2018-03-03T16:56:55.4010435Z",
+		"ask_price": 9285.09,
+		"ask_size": 4.29166449,
+		"bid_price": 9285.08,
+		"bid_size": 0.78371957,
+		"last_trade": {
+			"time_exchange": "2018-03-03T16:56:47.6120000Z",
+			"time_coinapi": "2018-03-03T16:56:47.5875890Z",
+			"uuid": "b58a33e6-5f9b-46dc-8599-13823264ceb9",
+			"price": 9285.08,
+			"size": 0.01,
+			"taker_side": "SELL"
+		}
+	}
+]
