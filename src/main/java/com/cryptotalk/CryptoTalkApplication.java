@@ -19,7 +19,7 @@ public class CryptoTalkApplication extends SpringBootServletInitializer
         SpringApplication.run(CryptoTalkApplication.class, args);
         Timer timer = new Timer();
         ScheduledTask st = new ScheduledTask();
-        timer.schedule(st, 0l, (1000 * 60 * 60) / 60);
+        timer.schedule(st, 0l, (1000 * 60 * 60));
     }
 
     @Override

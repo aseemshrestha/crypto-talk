@@ -21,7 +21,6 @@ public class NewsService
     public NewsService(AppConfig config)
     {
         this.config = Objects.requireNonNull(config);
-
     }
 
     public Map<String, News> getNews()
