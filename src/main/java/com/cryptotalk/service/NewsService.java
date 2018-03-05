@@ -23,15 +23,10 @@ public class NewsService
         this.config = Objects.requireNonNull(config);
     }
 
-    public Optional<Map<String, News>> getNews()
+    public Optional<Map<String, News>> getNews() throws IOException
     {
-        try {
-            if (newsMap.isEmpty()) {
-                newsMap.put("news", Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class));
-            }
-
-        } catch (IOException e) {
-            System.out.printf("Couldn't get news", e);
+        if (newsMap.isEmpty()) {
+            newsMap.put("news", Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class));
         }
         return Optional.ofNullable(newsMap);
     }

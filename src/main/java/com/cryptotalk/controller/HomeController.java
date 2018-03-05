@@ -1,5 +1,6 @@
 package com.cryptotalk.controller;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import com.cryptotalk.service.QuoteService;
 import com.cryptotalk.util.ResourceNotFoundException;
 import com.cryyptotalk.generated.News;
 import com.cryyptotalk.generated.Quote;
+import com.cryyptotalk.generated.QuoteWci;
 
 @RestController
 public class HomeController
@@ -30,7 +32,7 @@ public class HomeController
     }
 
     @RequestMapping( value = "/news", method = RequestMethod.GET, produces = { "application/json" } )
-    public ResponseEntity<?> getNews(@RequestParam( value = "cache", required = false ) String cache)
+    public ResponseEntity<?> getNews(@RequestParam( value = "cache", required = false ) String cache) throws IOException
     {
         if ("1".equals(cache)) {
             this.newsService.getNewsMap().clear();
@@ -47,15 +49,16 @@ public class HomeController
 
     @RequestMapping( value = "/", method = RequestMethod.GET, produces = { "application/json" } )
     public ResponseEntity<?> getQuote(@RequestParam( value = "cache", required = false ) String cache)
+        throws IOException
     {
         if ("1".equals(cache)) {
             this.quoteService.getQuoteMap().clear();
         }
 
-        Optional<Map<String, Quote[]>> quotes = this.quoteService.getQuotes();
+        Optional<Map<String, Quote[]>> quotes = this.quoteService.getQuotesCoinApi();
 
         if (quotes.get().isEmpty()) {
-            throw new ResourceNotFoundException("News Resource Not Found");
+            throw new ResourceNotFoundException("Quotes Not Found");
         }
 
         return new ResponseEntity<>(quotes.get(), HttpStatus.OK);

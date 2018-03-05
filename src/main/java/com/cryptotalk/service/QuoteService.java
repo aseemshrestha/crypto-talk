@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.cryptotalk.util.AppConfig;
 import com.cryyptotalk.generated.Quote;
+import com.cryyptotalk.generated.QuoteWci;
 
 @Service
 public class QuoteService
@@ -19,13 +20,14 @@ public class QuoteService
     private final AppConfig config;
 
     static Map<String, Quote[]> quoteMap = new ConcurrentHashMap<>();
+    static Map<String, QuoteWci> quoteMapWci = new ConcurrentHashMap<>();
 
     public QuoteService(AppConfig config)
     {
         this.config = Objects.requireNonNull(config);
     }
 
-    public Optional<Map<String, Quote[]>> getQuotes()
+    public Optional<Map<String, Quote[]>> getQuotesCoinApi()
     {
         if (quoteMap.isEmpty()) {
             RestTemplate restTemplate = new RestTemplate();

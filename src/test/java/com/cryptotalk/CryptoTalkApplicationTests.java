@@ -1,17 +1,26 @@
 package com.cryptotalk;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cryptotalk.exchanges.Drivers;
+import com.cryptotalk.exchanges.Exchanges;
 import com.cryptotalk.util.Util;
 import com.cryyptotalk.generated.News;
+import com.cryyptotalk.generated.QuoteWci;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -32,6 +41,54 @@ public class CryptoTalkApplicationTests
             assertEquals(expectedTitle, news.getArticles()[0].getTitle());
         }
 
+    }
+
+    @Test
+    public void test_quote_api_local() throws JsonParseException, JsonMappingException, IOException
+    {
+        InputStream input = getClass().getClassLoader().getResourceAsStream("test_quote_file.json");
+        QuoteWci quote = Util.parseJsonAsStream(input, QuoteWci.class);
+        for (int i = 0; i < quote.getMarkets().length; i++) {
+            for (int j = 0; j < quote.getMarkets()[i].length; j++) {
+                for (int k = 0; k < quote.getMarkets()[i][j].getName().length();) {
+                    System.out.println(quote.getMarkets()[i][j].getName());
+                    //  break;
+                }
+            }
+
+        }
+
+    }
+
+    @Test
+    public void test_scrape()
+    {
+        WebDriver driver = null;
+        try {
+            ClassLoader loader = getClass().getClassLoader();
+            File file = new File(loader.getResource(Drivers.CHROME.getValue()).getFile());
+            System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
+            driver = new ChromeDriver();
+            // driver.get(Exchanges.BINANCE.getValue());
+            driver.get(Exchanges.CRYPTOPIA.getValue());
+            WebElement table_element = driver.findElement(By.id(Exchanges.CRYPTOPIA_TABLE_ID.getValue()));
+            List<WebElement> tr_collection = table_element.findElements(By.xpath(Exchanges.CRYPTOPIA_XPATH.getValue()));
+
+            for (WebElement trElement : tr_collection) {
+                List<WebElement> td_collection = trElement.findElements(By.xpath("td"));
+
+                for (WebElement tdElement : td_collection) {
+                    System.out.println(tdElement.getText());
+
+                }
+
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Error" + ex);
+        } finally {
+            driver.quit();
+        }
     }
 
 }

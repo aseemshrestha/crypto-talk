@@ -1,0 +1,104 @@
+{
+	"Markets": [
+		[
+			{
+				"Label": "007/BTC",
+				"Name": "007coin",
+				"Price": 4.58766403,
+				"Volume_24h": 2786.6439907179702010,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "ZRX/BTC",
+				"Name": "0x",
+				"Price": 0.91604200,
+				"Volume_24h": 4656638.5369747816570081,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "10MT/BTC",
+				"Name": "10mtoken",
+				"Price": 0.00194951,
+				"Volume_24h": 11.6618760601462798,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "1337/BTC",
+				"Name": "1337",
+				"Price": 0.00022935,
+				"Volume_24h": 2276.4878059883148448,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "2BACCO/BTC",
+				"Name": "2bacco",
+				"Price": 0.00034403,
+				"Volume_24h": 166.3768711274707933,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "300/BTC",
+				"Name": "300token",
+				"Price": 580.28267721,
+				"Volume_24h": 690.4259573867523259,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "42/BTC",
+				"Name": "42Coin",
+				"Price": 56100.12992554,
+				"Volume_24h": 846.1068274348716285,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "808/BTC",
+				"Name": "808coin",
+				"Price": 0.00022935,
+				"Volume_24h": 7053.2365807365963956,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "8BIT/BTC",
+				"Name": "8bit",
+				"Price": 0.43795247,
+				"Volume_24h": 2990.2525481224815216,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "ABJ/BTC",
+				"Name": "Abjcoin",
+				"Price": 0.16972235,
+				"Volume_24h": 1788.8514147101331944,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "AC3/BTC",
+				"Name": "Ac3",
+				"Price": 0.30286265,
+				"Volume_24h": 114764.2332453978617081,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "ACC/BTC",
+				"Name": "Acceleratornetwork",
+				"Price": 8.72820139,
+				"Volume_24h": 10123.8869465399027663,
+				"Timestamp": 1520215860
+			},
+			{
+				"Label": "ACC/BTC",
+				"Name": "Acchain",
+				"Price": 2.72203847,
+				"Volume_24h": 0,
+				"Timestamp": 1518696480
+			},
+			{
+				"Label": "ACE/BTC",
+				"Name": "Ace",
+				"Price": 0.27706027,
+				"Volume_24h": 922776.9897651845247323,
+				"Timestamp": 1520215860
+			}
+		]
+	]
+}
