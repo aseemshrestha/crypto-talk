@@ -1,6 +1,5 @@
 package com.cryptotalk.service;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,24 +15,34 @@ public class NewsService
 
     private final AppConfig config;
 
-    static Map<String, News> newsMap = new ConcurrentHashMap<>();
+    Map<String, News> newsMap = new ConcurrentHashMap<>();
+    Map<String, News> newsMapTemp = new ConcurrentHashMap<>();
 
     public NewsService(AppConfig config)
     {
         this.config = Objects.requireNonNull(config);
     }
 
-    public Optional<Map<String, News>> getNews() throws IOException
+    public Optional<Map<String, News>> setNews()
     {
-        if (newsMap.isEmpty()) {
-            newsMap.put("news", Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class));
+        try {
+            News news = Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class);
+            newsMap.put("news", news);
+            newsMapTemp.put("news", news);
+        } catch (Exception ex) {
+            System.out.println("Error setting news:" + ex);
         }
         return Optional.ofNullable(newsMap);
     }
 
-    public Map<String, News> getNewsMap()
+    public Optional<Map<String, News>> getNewsMap()
     {
-        return newsMap;
+        return Optional.of(newsMap);
+    }
+
+    public Optional<Map<String, News>> getNewsMapTemp()
+    {
+        return Optional.of(newsMapTemp);
     }
 
 }

@@ -4,7 +4,7 @@ public enum Drivers
 {
     CHROME_EXE("chromedriver.exe"),
     CHROME_PROPERTY("webdriver.chrome.driver");
-    
+
     private final String value;
 
     private Drivers(String value)
