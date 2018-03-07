@@ -66,22 +66,22 @@ public class CryptoTalkApplicationTests
         WebDriver driver = null;
         try {
             ClassLoader loader = getClass().getClassLoader();
-            File file = new File(loader.getResource(Drivers.CHROME.getValue()).getFile());
+            File file = new File(loader.getResource(Drivers.CHROME_EXE.getValue()).getFile());
             System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
             driver = new ChromeDriver();
-            // driver.get(Exchanges.BINANCE.getValue());
-            driver.get(Exchanges.CRYPTOPIA.getValue());
-            WebElement table_element = driver.findElement(By.id(Exchanges.CRYPTOPIA_TABLE_ID.getValue()));
-            List<WebElement> tr_collection = table_element.findElements(By.xpath(Exchanges.CRYPTOPIA_XPATH.getValue()));
+            driver.get(Exchanges.BINANCE.getValue());
+            //driver.get(Exchanges.CRYPTOPIA.getValue());
+            WebElement table_element = driver.findElement(By.id(Exchanges.BINANCE_TABLE_ID.getValue()));
+            List<WebElement> tr_collection = table_element.findElements(By.xpath(Exchanges.BINANCE_XPATH.getValue()));
 
-            for (WebElement trElement : tr_collection) {
-                List<WebElement> td_collection = trElement.findElements(By.xpath("td"));
+            //   System.out.println(tr_collection.get(0).getText());
+            for (int j = 0; j < tr_collection.size(); j++) {
 
-                for (WebElement tdElement : td_collection) {
-                    System.out.println(tdElement.getText());
+                //  List<WebElement> td_collection = tr_collection.get(j).findElements(By.xpath("td"));
 
-                }
+                System.out.println(tr_collection.get(j).getText());
 
+                // }
             }
 
         } catch (Exception ex) {
@@ -89,6 +89,6 @@ public class CryptoTalkApplicationTests
         } finally {
             driver.quit();
         }
-    }
 
+    }
 }

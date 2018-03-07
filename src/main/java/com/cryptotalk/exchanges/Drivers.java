@@ -2,7 +2,8 @@ package com.cryptotalk.exchanges;
 
 public enum Drivers
 {
-    CHROME("chromedriver.exe");
+    CHROME_EXE("chromedriver.exe"),
+    CHROME_PROPERTY("webdriver.chrome.driver");
     
     private final String value;
 
