@@ -1,85 +1,142 @@
 package com.cryptotalk.service;
 
-import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.CompletableFuture;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import com.cryptotalk.models.QuoteModel;
+import com.cryptotalk.worker.Worker;
 
 @Service
-public class DataLoaderService {
-	Map<String, Set<QuoteModel>> quoteMap = new LinkedHashMap<>();
-	Map<String, Set<QuoteModel>> quoteMapTemp = new LinkedHashMap<>();
-	private final String DELIMITER = " ";
-	private static final Logger LOG = LogManager.getLogger(DataLoaderService.class);
+public class DataLoaderService
+{
+    private static final Logger LOG = LogManager.getLogger(DataLoaderService.class);
 
-	public Optional<Map<String, Set<QuoteModel>>> setBinanceData(String driverProperty, String driverexe,
-			String exchangeName, String tableId, String xpath) {
-		WebDriver driver = null;
-		quoteMap.clear();
+    private final Map<String, List<QuoteModel>> binanceMap = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> binanceMapTemp = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> cryptopiaMap = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> cryptopiaMapTemp = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> bittrexMap = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> bittrexMapTemp = new LinkedHashMap<>();
+    private final Worker worker;
 
-		try {
-			ClassLoader loader = getClass().getClassLoader();
-			File file = new File(loader.getResource(driverexe).getFile());
-			System.setProperty(driverProperty, file.getAbsolutePath());
-			driver = new ChromeDriver();
-			try {
-				driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
-			} catch (TimeoutException ex) {
-				LOG.debug("[Selenium] BI Page didnot load----Timed out===" + ex);
-			}
-			driver.get(exchangeName);
-			WebElement table_element = driver.findElement(By.id(tableId));
-			List<WebElement> tr_collection = table_element.findElements(By.xpath(xpath));
-			Set<QuoteModel> setModel = new LinkedHashSet<>();
-			setModel.clear();
-			for (int j = 1; j < tr_collection.size(); j++) {
-				if (tr_collection.get(j).getText().isEmpty()) {
-					continue;
-				}
-				QuoteModel model = new QuoteModel();
-				model.setTicker(tr_collection.get(j).getText().split(DELIMITER)[0]);
-				model.setPrice(tr_collection.get(j).getText().split(DELIMITER)[1]
-						+ tr_collection.get(j).getText().split(DELIMITER)[2]
-						+ tr_collection.get(j).getText().split(DELIMITER)[3]);
-				model.setChange24h(tr_collection.get(j).getText().split(DELIMITER)[4]);
-				model.setHigh24hr(tr_collection.get(j).getText().split(DELIMITER)[5]);
-				model.setLow24h(tr_collection.get(j).getText().split(DELIMITER)[6]);
-				model.setVolume(tr_collection.get(j).getText().split(DELIMITER)[7]);
-				setModel.add(model);
+    private DataLoaderService(Worker worker)
+    {
+        this.worker = worker;
+    }
 
-			}
-			quoteMap.put("bi_quote", setModel);
-			quoteMapTemp.put("bi_quote", setModel);
+    public Optional<Map<String, List<QuoteModel>>> setBinanceData()
+    {
 
-		} catch (Exception ex) {
-			LOG.debug("[Selenium]Failed to load bi logger===> " + ex);
-		} finally {
-			driver.quit();
-		}
-		return Optional.ofNullable(quoteMap);
-	}
+        binanceMap.clear();
+        List<QuoteModel> biQuoteModel;
+        try {
+            biQuoteModel = this.worker.binanceWorker();
+            binanceMap.put("bi_quote", biQuoteModel);
+            binanceMapTemp.put("bi_quote", biQuoteModel);
+        } catch (Exception ex) {
+            LOG.debug("[DataLoaderService][Selenium]Failed to load bi logger===> " + ex);
+        }
+        return Optional.ofNullable(binanceMap);
+    }
 
-	public Optional<Map<String, Set<QuoteModel>>> getBinanceData() {
-		return Optional.ofNullable(quoteMap);
-	}
+    public Optional<Map<String, List<QuoteModel>>> setCryptoPiaData()
+    {
+        cryptopiaMap.clear();
+        List<QuoteModel> piaQuoteModel;
+        try {
+            piaQuoteModel = this.worker.cryptopiaWorker();
+            cryptopiaMap.put("cr_quote", piaQuoteModel);
+            cryptopiaMapTemp.put("cr_quote", piaQuoteModel);
+        } catch (Exception ex) {
+            LOG.debug("[DataLoaderService] Cannot parse cryptopia json --------:" + ex);
+        }
+        return Optional.ofNullable(cryptopiaMap);
+    }
 
-	public Optional<Map<String, Set<QuoteModel>>> getBinanceDataTemp() {
-		return Optional.ofNullable(quoteMapTemp);
-	}
+    public Optional<Map<String, List<QuoteModel>>> setBittrexData()
+    {
+        bittrexMap.clear();
+        List<QuoteModel> bittrexQuoteModel;
+        try {
+            bittrexQuoteModel = this.worker.bittrexWorker();
+            bittrexMap.put("bt_quote", bittrexQuoteModel);
+            bittrexMapTemp.put("bt_quote", bittrexQuoteModel);
+        } catch (Exception ex) {
+            LOG.debug("[DataLoaderService] Cannot parse bittrex json --------:" + ex);
+        }
+        return Optional.ofNullable(bittrexMap);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getBinanceData()
+    {
+        return Optional.ofNullable(binanceMap);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getBinanceDataTemp()
+    {
+        return Optional.ofNullable(binanceMapTemp);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getCryptopiaData()
+    {
+        return Optional.ofNullable(cryptopiaMap);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getCryptopiaDataTemp()
+    {
+        return Optional.ofNullable(cryptopiaMapTemp);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getBittrexData()
+    {
+        return Optional.ofNullable(bittrexMap);
+    }
+
+    public Optional<Map<String, List<QuoteModel>>> getBittrexDataTemp()
+    {
+        return Optional.ofNullable(bittrexMapTemp);
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getBinanceDataAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(binanceMap));
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getBinanceDataTempAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(binanceMapTemp));
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getCryptopiaDataAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(cryptopiaMap));
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getCryptopiaDataTempAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(cryptopiaMap));
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getBittrexDataAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(bittrexMap));
+    }
+
+    @Async
+    public CompletableFuture<Optional<Map<String, List<QuoteModel>>>> getBittrexDataTempAsync()
+    {
+        return CompletableFuture.completedFuture(Optional.ofNullable(bittrexMapTemp));
+    }
 
 }

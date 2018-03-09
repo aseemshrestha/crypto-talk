@@ -5,68 +5,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppConfig
 {
-    // c5665deea8514a0eb13ec06e34237ebd
-    //10503456-E37F-4771-802A-567F7171C2F6
-    private final String newsApiUrl =
+    private final String NEWS_API_URL =
         "https://newsapi.org/v2/everything?sources=crypto-coins-news&apiKey=c5665deea8514a0eb13ec06e34237ebd";
 
-    private final String QUOTE_API_WCI =
-        "https://www.worldcoinindex.com/apiservice/getmarkets?key=yqlvgkU8IWgf78ClQ28CjcCqOarS8a&fiat=usd";
+    private final String CRYPTOPIA_API = "https://www.cryptopia.co.nz/api/GetMarkets/BTC";
 
-    //coinapi
-    private final String QUOTE_API_CA = "https://rest.coinapi.io/v1/quotes/current";
-    private final String QUOTE_API_LA = "https://rest.coinapi.io/v1/quotes/latest?limit={limit}";
-    private final String QUOTE_API_HEADER_KEY = "X-CoinAPI-Key";
-    private final String QUOTE_API_HEADER_VALUE = "10503456-E37F-4771-802A-567F7171C2F6";
+    private final String BITTREX_API = "https://bittrex.com/api/v1.1/public/getmarketsummaries";
 
-    public String getQuoteApiWCI()
+    public String getCryptopiaApi()
     {
-        return QUOTE_API_WCI;
-    }
-
-    public String getQUOTE_API_CA()
-    {
-        return QUOTE_API_CA;
-    }
-
-    public String getQUOTE_API_LA()
-    {
-        return QUOTE_API_LA;
-    }
-
-    public String getQUOTE_API_HEADER_KEY()
-    {
-        return QUOTE_API_HEADER_KEY;
-    }
-
-    public String getQUOTE_API_HEADER_VALUE()
-    {
-        return QUOTE_API_HEADER_VALUE;
-    }
-
-    public String getQuoteApi_CA()
-    {
-        return QUOTE_API_CA;
-    }
-
-    public String getQuoteApiHeaderKey()
-    {
-        return QUOTE_API_HEADER_KEY;
-    }
-
-    public String getQuoteApiHeaderValue()
-    {
-        return QUOTE_API_HEADER_VALUE;
+        return CRYPTOPIA_API;
     }
 
     public String getNewsApiUrl()
     {
-        return newsApiUrl;
+        return NEWS_API_URL;
     }
 
-    public String getQuoteApi()
+    public String getBittrexApi()
     {
-        return QUOTE_API_CA;
+        return BITTREX_API;
     }
 
 }

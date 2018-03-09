@@ -17,7 +17,7 @@ public enum Exchanges
 
     private final String value;
 
-    private Exchanges(String value)
+    Exchanges(String value)
     {
         this.value = value;
     }
