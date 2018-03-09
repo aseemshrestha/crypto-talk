@@ -95,7 +95,7 @@ class HomeController
         try {
             this.loaderService.setBinanceData();
             this.loaderService.setCryptoPiaData();
-            this.loaderService.setBinanceData();
+            this.loaderService.setBittrexData();
 
         } catch (Exception ex) {
             LOG.debug("Exception while running loaders:", ex);
