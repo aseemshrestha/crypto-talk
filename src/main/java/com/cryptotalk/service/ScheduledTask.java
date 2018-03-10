@@ -22,7 +22,7 @@ public class ScheduledTask
     {
         try {
             LOG.info("Running [updateBinanceLoader] scheduled task -> running BI loader.......");
-            loaderService.setBinanceData();
+            loaderService.loadBinanceData();
         } catch (Exception ex) {
             LOG.debug("Exception [updateBinanceLoader] while running BI data loader from task..." + ex);
         }
@@ -33,18 +33,18 @@ public class ScheduledTask
     {
         try {
             LOG.info("Running [updateCryptopiaLoader] scheduled task -> running Cryptopia loader.......");
-            loaderService.setCryptoPiaData();
+            loaderService.loadCryptopiaData();
         } catch (Exception ex) {
             LOG.debug("Exception [updateCryptopiaLoader] while running cryptopia data loader from task..." + ex);
         }
     }
 
-    @Scheduled( cron = "0 0/1 * * * ?" )
+    @Scheduled( cron = "0 0/15 * * * ?" )
     public void updateBittrexLoader()
     {
         try {
             LOG.info("Running [updateBittrexLoader] scheduled task -> running Bittrex loader.......");
-            loaderService.setBittrexData();
+            loaderService.loadBittrexData();
         } catch (Exception ex) {
             LOG.debug("Exception [updateBittrexLoader] while running bittrex data loader from task..." + ex);
         }

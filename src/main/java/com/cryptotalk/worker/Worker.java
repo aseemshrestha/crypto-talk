@@ -1,10 +1,12 @@
 package com.cryptotalk.worker;
 
+import static java.util.stream.IntStream.range;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.IntStream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -12,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Component;
+
 import com.cryptotalk.exchanges.Drivers;
 import com.cryptotalk.exchanges.Exchanges;
 import com.cryptotalk.models.QuoteModel;
@@ -27,6 +30,7 @@ public class Worker
     private final List<QuoteModel> binanceList = new LinkedList<>();
     private final List<QuoteModel> piaList = new LinkedList<>();
     private final List<QuoteModel> bittrexList = new LinkedList<>();
+
     private final AppConfig config;
     private WebDriver driver = null;
     private static final Logger LOG = LogManager.getLogger(DataLoaderService.class);
@@ -53,20 +57,20 @@ public class Worker
             WebElement table_element = driver.findElement(By.id(tableId));
             List<WebElement> tr_collection = table_element.findElements(By.xpath(xpath));
             binanceList.clear();
-            IntStream.range(1, tr_collection.size()).filter(j -> !tr_collection.get(j).getText().isEmpty())
-                .forEachOrdered(j -> {
-                    QuoteModel model = new QuoteModel();
-                    String DELIMITER = " ";
-                    model.setTicker(tr_collection.get(j).getText().split(DELIMITER)[0]);
-                    model.setPrice(tr_collection.get(j).getText().split(DELIMITER)[1]
+            int bound = tr_collection.size();
+            range(1, bound).filter(j -> !tr_collection.get(j).getText().isEmpty()).forEach(j -> {
+                QuoteModel model = new QuoteModel();
+                String DELIMITER = " ";
+                model.setTicker(tr_collection.get(j).getText().split(DELIMITER)[0]);
+                model.setPrice(tr_collection.get(j).getText().split(DELIMITER)[1]
                         + tr_collection.get(j).getText().split(DELIMITER)[2]
                         + tr_collection.get(j).getText().split(DELIMITER)[3]);
-                    model.setChange24h(tr_collection.get(j).getText().split(DELIMITER)[4]);
-                    model.setHigh24hr(tr_collection.get(j).getText().split(DELIMITER)[5]);
-                    model.setLow24h(tr_collection.get(j).getText().split(DELIMITER)[6]);
-                    model.setVolume(tr_collection.get(j).getText().split(DELIMITER)[7]);
-                    binanceList.add(model);
-                });
+                model.setChange24h(tr_collection.get(j).getText().split(DELIMITER)[4]);
+                model.setHigh24hr(tr_collection.get(j).getText().split(DELIMITER)[5]);
+                model.setLow24h(tr_collection.get(j).getText().split(DELIMITER)[6]);
+                model.setVolume(tr_collection.get(j).getText().split(DELIMITER)[7]);
+                binanceList.add(model);
+            });
         } catch (Exception ex) {
             LOG.debug("[Worker]Cannot get data from binance --------:" + ex);
         } finally {
@@ -82,7 +86,8 @@ public class Worker
         try {
             Cryptopia market = Util.parseJsonFromUrl(this.config.getCryptopiaApi(), Cryptopia.class);
             piaList.clear();
-            IntStream.range(0, market.getData().length).forEach(i -> {
+            int bound = market.getData().length;
+            range(0, bound).forEach((int i) -> {
                 QuoteModel model = new QuoteModel();
                 model.setTicker(market.getData()[i].getLabel());
                 model.setPrice(market.getData()[i].getAskPrice());
@@ -105,7 +110,7 @@ public class Worker
             Bittrex market = Util.parseJsonFromUrl(this.config.getBittrexApi(), Bittrex.class);
             bittrexList.clear();
             int bound = market.getResult().length;
-            for (int i = 0; i < bound; i++) {
+            range(0, bound).forEach(i -> {
                 QuoteModel model = new QuoteModel();
                 if (market.getResult()[i].getMarketName().startsWith("BTC")) {
                     double _high = Double.parseDouble(market.getResult()[i].getHigh());
@@ -119,7 +124,7 @@ public class Worker
                     model.setVolume(market.getResult()[i].getVolume());
                     bittrexList.add(model);
                 }
-            }
+            });
 
         } catch (Exception ex) {
             LOG.debug("[Worker] Cannot parse bittrex json --------:" + ex);

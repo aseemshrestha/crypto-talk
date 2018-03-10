@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-	<Properties>
-		<Property name="log-path">logs</Property>
-	</Properties>
+	<Properties><Property name="log-path">logs</Property></Properties>
 	<Appenders>
 		<Console name="console-log" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+			<PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
 		</Console>
-		<RollingFile name="trace-log" fileName="${sys:catalina.home}/logs/app.log"
-			filePattern="${sys:catalina.home}/logs/app.log-%d{yyyy-MM-dd}.log">
+		<RollingFile name="trace-log" fileName="${sys:catalina.home}/logs/app.log" filePattern="${sys:catalina.home}/logs/app.log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
-				</pattern>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
 			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
+			<Policies> <TimeBasedTriggeringPolicy interval="1" modulate="true" /></Policies>
 		</RollingFile>
-		<RollingFile name="error-log" fileName="${sys:catalina.home}/logs/app.log"
-			filePattern="${sys:catalina.home}/logs-%d{yyyy-MM-dd}.log">
+		<RollingFile name="error-log" fileName="${sys:catalina.home}/logs/app.log" filePattern="${sys:catalina.home}/logs-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
-				</pattern>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n </pattern>
 			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
+			<Policies><TimeBasedTriggeringPolicy interval="1" modulate="true" /> </Policies>
 		</RollingFile>
 	</Appenders>
 	<Loggers>

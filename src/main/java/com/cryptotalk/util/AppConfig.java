@@ -12,14 +12,14 @@ public class AppConfig
 
     private final String BITTREX_API = "https://bittrex.com/api/v1.1/public/getmarketsummaries";
 
-    public String getCryptopiaApi()
-    {
-        return CRYPTOPIA_API;
-    }
-
     public String getNewsApiUrl()
     {
         return NEWS_API_URL;
+    }
+
+    public String getCryptopiaApi()
+    {
+        return CRYPTOPIA_API;
     }
 
     public String getBittrexApi()

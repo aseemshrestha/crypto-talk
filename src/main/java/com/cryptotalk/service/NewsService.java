@@ -13,35 +13,40 @@ import com.cryptotalk.util.Util;
 import com.cryyptotalk.generated.News;
 
 @Service
-public class NewsService {
+public class NewsService
+{
 
-	private final AppConfig config;
+    private final AppConfig config;
 
-	Map<String, News> newsMap = new ConcurrentHashMap<>();
-	Map<String, News> newsMapTemp = new ConcurrentHashMap<>();
-	private static final Logger LOG = LogManager.getLogger(NewsService.class);
+    Map<String, News> newsMap = new ConcurrentHashMap<>();
+    Map<String, News> newsMapTemp = new ConcurrentHashMap<>();
+    private static final Logger LOG = LogManager.getLogger(NewsService.class);
 
-	public NewsService(AppConfig config) {
-		this.config = Objects.requireNonNull(config);
-	}
+    public NewsService(AppConfig config)
+    {
+        this.config = Objects.requireNonNull(config);
+    }
 
-	public Optional<Map<String, News>> setNews() {
-		try {
-			News news = Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class);
-			newsMap.put("news", news);
-			newsMapTemp.put("news", news);
-		} catch (Exception ex) {
-			LOG.debug("Cannot parse news json --------:" + ex);
-		}
-		return Optional.ofNullable(newsMap);
-	}
+    public Optional<Map<String, News>> setNews()
+    {
+        try {
+            News news = Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class);
+            newsMap.put("news", news);
+            newsMapTemp.put("news", news);
+        } catch (Exception ex) {
+            LOG.debug("Cannot parse news json --------:" + ex);
+        }
+        return Optional.ofNullable(newsMap);
+    }
 
-	public Optional<Map<String, News>> getNewsMap() {
-		return Optional.of(newsMap);
-	}
+    public Optional<Map<String, News>> getNewsMap()
+    {
+        return Optional.of(newsMap);
+    }
 
-	public Optional<Map<String, News>> getNewsMapTemp() {
-		return Optional.of(newsMapTemp);
-	}
+    public Optional<Map<String, News>> getNewsMapTemp()
+    {
+        return Optional.of(newsMapTemp);
+    }
 
 }

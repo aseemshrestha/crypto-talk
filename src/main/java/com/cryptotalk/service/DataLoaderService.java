@@ -17,26 +17,30 @@ public class DataLoaderService
 {
     private static final Logger LOG = LogManager.getLogger(DataLoaderService.class);
 
-    private final Map<String, List<QuoteModel>> binanceMap = new LinkedHashMap<>();
-    private final Map<String, List<QuoteModel>> binanceMapTemp = new LinkedHashMap<>();
-    private final Map<String, List<QuoteModel>> cryptopiaMap = new LinkedHashMap<>();
-    private final Map<String, List<QuoteModel>> cryptopiaMapTemp = new LinkedHashMap<>();
-    private final Map<String, List<QuoteModel>> bittrexMap = new LinkedHashMap<>();
-    private final Map<String, List<QuoteModel>> bittrexMapTemp = new LinkedHashMap<>();
+    private final Map<String, List<QuoteModel>> binanceMap;
+    private final Map<String, List<QuoteModel>> binanceMapTemp;
+    private final Map<String, List<QuoteModel>> cryptopiaMap;
+    private final Map<String, List<QuoteModel>> cryptopiaMapTemp;
+    private final Map<String, List<QuoteModel>> bittrexMap;
+    private final Map<String, List<QuoteModel>> bittrexMapTemp;
     private final Worker worker;
 
     private DataLoaderService(Worker worker)
     {
         this.worker = worker;
+        bittrexMapTemp = new LinkedHashMap<>();
+        binanceMap = new LinkedHashMap<>();
+        binanceMapTemp = new LinkedHashMap<>();
+        bittrexMap = new LinkedHashMap<>();
+        cryptopiaMapTemp = new LinkedHashMap<>();
+        cryptopiaMap = new LinkedHashMap<>();
     }
 
-    public Optional<Map<String, List<QuoteModel>>> setBinanceData()
+    public Optional<Map<String, List<QuoteModel>>> loadBinanceData()
     {
-
         binanceMap.clear();
-        List<QuoteModel> biQuoteModel;
         try {
-            biQuoteModel = this.worker.binanceWorker();
+            List<QuoteModel> biQuoteModel = this.worker.binanceWorker();
             binanceMap.put("bi_quote", biQuoteModel);
             binanceMapTemp.put("bi_quote", biQuoteModel);
         } catch (Exception ex) {
@@ -44,13 +48,12 @@ public class DataLoaderService
         }
         return Optional.ofNullable(binanceMap);
     }
-
-    public Optional<Map<String, List<QuoteModel>>> setCryptoPiaData()
+    
+    public Optional<Map<String, List<QuoteModel>>> loadCryptopiaData()
     {
         cryptopiaMap.clear();
-        List<QuoteModel> piaQuoteModel;
         try {
-            piaQuoteModel = this.worker.cryptopiaWorker();
+            List<QuoteModel> piaQuoteModel = this.worker.cryptopiaWorker();
             cryptopiaMap.put("cr_quote", piaQuoteModel);
             cryptopiaMapTemp.put("cr_quote", piaQuoteModel);
         } catch (Exception ex) {
@@ -59,12 +62,11 @@ public class DataLoaderService
         return Optional.ofNullable(cryptopiaMap);
     }
 
-    public Optional<Map<String, List<QuoteModel>>> setBittrexData()
+    public Optional<Map<String, List<QuoteModel>>> loadBittrexData()
     {
         bittrexMap.clear();
-        List<QuoteModel> bittrexQuoteModel;
         try {
-            bittrexQuoteModel = this.worker.bittrexWorker();
+            List<QuoteModel> bittrexQuoteModel = this.worker.bittrexWorker();
             bittrexMap.put("bt_quote", bittrexQuoteModel);
             bittrexMapTemp.put("bt_quote", bittrexQuoteModel);
         } catch (Exception ex) {
@@ -88,10 +90,7 @@ public class DataLoaderService
         return Optional.ofNullable(cryptopiaMap);
     }
 
-    public Optional<Map<String, List<QuoteModel>>> getCryptopiaDataTemp()
-    {
-        return Optional.ofNullable(cryptopiaMapTemp);
-    }
+    public Optional<Map<String, List<QuoteModel>>> getCryptopiaDataTemp() { return Optional.ofNullable(cryptopiaMapTemp); }
 
     public Optional<Map<String, List<QuoteModel>>> getBittrexData()
     {
