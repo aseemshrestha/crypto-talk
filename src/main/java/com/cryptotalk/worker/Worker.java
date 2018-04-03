@@ -1,6 +1,8 @@
 package com.cryptotalk.worker;
 
 import static java.util.stream.IntStream.range;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -33,16 +35,16 @@ public class Worker
 
     public List<CoinMarketCap> coinMarketCapWorker()
     {
+        List<CoinMarketCap> coinMarketCap = Collections.emptyList();
         try {
-            
-            List<CoinMarketCap> coinMarketCap =
+
+            coinMarketCap =
                 Util.parseJsonArrayFromUrl(this.config.getCoinMarketCapApi(), CoinMarketCap.class);
-            return coinMarketCap;
 
         } catch (Exception ex) {
             LOG.debug("[Worker][CoinMarketCap] Cannot parse coin market cap json" + ex);
         }
-        return null;
+        return coinMarketCap;
     }
 
     public List<QuoteModel> binanceWorker()
