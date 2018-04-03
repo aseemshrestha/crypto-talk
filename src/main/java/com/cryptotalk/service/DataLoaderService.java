@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import com.cryptotalk.models.QuoteModel;
 import com.cryptotalk.worker.Worker;
+import com.cryyptotalk.generated.CoinMarketCap;
 
 @Service
 public class DataLoaderService
@@ -23,6 +24,8 @@ public class DataLoaderService
     private final Map<String, List<QuoteModel>> cryptopiaMapTemp;
     private final Map<String, List<QuoteModel>> bittrexMap;
     private final Map<String, List<QuoteModel>> bittrexMapTemp;
+    private final Map<String, List<CoinMarketCap>> coinMarketCapMap;
+    private final Map<String, List<CoinMarketCap>> coinMarketCapMapTemp;
     private final Worker worker;
 
     private DataLoaderService(Worker worker)
@@ -34,6 +37,21 @@ public class DataLoaderService
         bittrexMap = new LinkedHashMap<>();
         cryptopiaMapTemp = new LinkedHashMap<>();
         cryptopiaMap = new LinkedHashMap<>();
+        coinMarketCapMap = new LinkedHashMap<>();
+        coinMarketCapMapTemp = new LinkedHashMap<>();
+    }
+
+    public Optional<Map<String, List<CoinMarketCap>>> loadCoinMarketCapData()
+    {
+        coinMarketCapMap.clear();
+        try {
+            List<CoinMarketCap> cmcModel = this.worker.coinMarketCapWorker();
+            coinMarketCapMap.put("cmc_quote", cmcModel);
+            coinMarketCapMapTemp.put("cmc_quote", cmcModel);
+        } catch (Exception ex) {
+            LOG.debug("[DataLoaderService][loadBinanceData] Failed to load coin maket cap loader " + ex);
+        }
+        return Optional.ofNullable(coinMarketCapMap);
     }
 
     public Optional<Map<String, List<QuoteModel>>> loadBinanceData()
@@ -44,11 +62,11 @@ public class DataLoaderService
             binanceMap.put("bi_quote", biQuoteModel);
             binanceMapTemp.put("bi_quote", biQuoteModel);
         } catch (Exception ex) {
-            LOG.debug("[DataLoaderService][Selenium]Failed to load bi logger===> " + ex);
+            LOG.debug("[DataLoaderService][loadBinanceData] Failed to load bi loader " + ex);
         }
         return Optional.ofNullable(binanceMap);
     }
-    
+
     public Optional<Map<String, List<QuoteModel>>> loadCryptopiaData()
     {
         cryptopiaMap.clear();
@@ -57,7 +75,7 @@ public class DataLoaderService
             cryptopiaMap.put("cr_quote", piaQuoteModel);
             cryptopiaMapTemp.put("cr_quote", piaQuoteModel);
         } catch (Exception ex) {
-            LOG.debug("[DataLoaderService] Cannot parse cryptopia json --------:" + ex);
+            LOG.debug("[DataLoaderService][loadCryptopiaData] Failed to load cryptopia loader" + ex);
         }
         return Optional.ofNullable(cryptopiaMap);
     }
@@ -70,9 +88,19 @@ public class DataLoaderService
             bittrexMap.put("bt_quote", bittrexQuoteModel);
             bittrexMapTemp.put("bt_quote", bittrexQuoteModel);
         } catch (Exception ex) {
-            LOG.debug("[DataLoaderService] Cannot parse bittrex json --------:" + ex);
+            LOG.debug("[DataLoaderService][loadBittrexData] Failed to load bittrex data" + ex);
         }
         return Optional.ofNullable(bittrexMap);
+    }
+
+    public Optional<Map<String, List<CoinMarketCap>>> getCoinMarketCapData()
+    {
+        return Optional.ofNullable(coinMarketCapMap);
+    }
+
+    public Optional<Map<String, List<CoinMarketCap>>> getCoinMarketCapDataTemp()
+    {
+        return Optional.ofNullable(coinMarketCapMapTemp);
     }
 
     public Optional<Map<String, List<QuoteModel>>> getBinanceData()
@@ -90,7 +118,10 @@ public class DataLoaderService
         return Optional.ofNullable(cryptopiaMap);
     }
 
-    public Optional<Map<String, List<QuoteModel>>> getCryptopiaDataTemp() { return Optional.ofNullable(cryptopiaMapTemp); }
+    public Optional<Map<String, List<QuoteModel>>> getCryptopiaDataTemp()
+    {
+        return Optional.ofNullable(cryptopiaMapTemp);
+    }
 
     public Optional<Map<String, List<QuoteModel>>> getBittrexData()
     {

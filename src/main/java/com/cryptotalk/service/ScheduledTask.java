@@ -55,9 +55,20 @@ public class ScheduledTask
     {
         try {
             LOG.info("Running [updateNewsLoader] scheduled task running NEWS loader.......");
-            newsService.setNews();
+            newsService.getNews();
         } catch (Exception ex) {
             LOG.debug("Exception [updateNewsLoader] while running news loader from task..." + ex);
+        }
+    }
+
+    @Scheduled( cron = "0 0/15 * * * ?" )
+    public void updateCmcLoader()
+    {
+        try {
+            LOG.info("Running [updateCMCLoader] scheduled task -> running CMC loader.......");
+            loaderService.loadCoinMarketCapData();
+        } catch (Exception ex) {
+            LOG.debug("Exception [updateCMCLoader] while running CMC data loader from task..." + ex);
         }
     }
 

@@ -5,106 +5,109 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
 import com.cryptotalk.models.QuoteModel;
 import com.cryptotalk.service.DataLoaderService;
-import com.cryptotalk.service.NewsService;
-import com.cryyptotalk.generated.News;
+import com.cryyptotalk.generated.CoinMarketCap;
 
 @RestController
-class MarketController {
-	@Autowired
-	private NewsService newsService;
-	@Autowired
-	private DataLoaderService loaderService;
+public class MarketController
+{
+    // @Autowired
+    // private DataLoaderService loaderService;
 
-	private static final Logger LOG = LogManager.getLogger(MarketController.class);
+    private final DataLoaderService loaderService;
 
-	@RequestMapping(value = "/news", method = RequestMethod.GET, produces = { "application/json" })
-	public ResponseEntity<?> getNews() {
-		Map<String, News> news = this.newsService.getNewsMap().get();
+    public MarketController(DataLoaderService loaderService)
+    {
+        this.loaderService = loaderService;
+    }
 
-		if (!news.isEmpty()) {
-			return new ResponseEntity<>(news, HttpStatus.OK);
-		}
-		LOG.info("Reloading News via temporary map.......");
-		news = this.newsService.getNewsMapTemp().get();
-		assert !news.isEmpty() : "News Resource Not Found";
+    private static final Logger LOG = LogManager.getLogger(MarketController.class);
 
-		return new ResponseEntity<>(news, HttpStatus.OK);
-	}
+    @RequestMapping( value = "/", method = RequestMethod.GET )
+    public String home()
+    {
+        return new String("test");
+    }
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home() {
-		return new String("test");
-	}
+    @RequestMapping( value = "/cmc", method = RequestMethod.GET, produces = { "application/json" } )
+    public ResponseEntity<?> getCoinMarketCap()
+    {
+        Optional<Map<String, List<CoinMarketCap>>> cmcQuote = this.loaderService.getCoinMarketCapData();
+        if (cmcQuote.get().isEmpty()) {
+            LOG.info("Reloading CoinMarketCap data via temporary map");
+            cmcQuote = this.loaderService.getCoinMarketCapData();
+            assert !cmcQuote.get().isEmpty() : "CMC Resource Not Found";
+        }
+        return new ResponseEntity<>(cmcQuote.get(), HttpStatus.OK);
 
-	@RequestMapping(value = "/quotes", method = RequestMethod.GET, produces = { "application/json" })
-	public ResponseEntity<?> getMarkets() throws InterruptedException, ExecutionException {
-		// CompletableFuture<Optional<Map<String, List<QuoteModel>>>> binanceQuote;
-		// CompletableFuture<Optional<Map<String, List<QuoteModel>>>> piaQuote;
-		Map<String, Map<String, List<QuoteModel>>> marketMap = new LinkedHashMap<>();
+    }
 
-		long start = System.currentTimeMillis();
+    @RequestMapping( value = "/quotes-exchanges", method = RequestMethod.GET, produces = { "application/json" } )
+    public ResponseEntity<?> getMarkets() throws InterruptedException, ExecutionException
+    {
+        // CompletableFuture<Optional<Map<String, List<QuoteModel>>>> binanceQuote;
+        // CompletableFuture<Optional<Map<String, List<QuoteModel>>>> piaQuote;
+        Map<String, Map<String, List<QuoteModel>>> marketMap = new LinkedHashMap<>();
 
-		Optional<Map<String, List<QuoteModel>>> binanceQuote = this.loaderService.getBinanceData();
-		Optional<Map<String, List<QuoteModel>>> piaQuote = this.loaderService.getCryptopiaData();
-		Optional<Map<String, List<QuoteModel>>> bittrexQuote = this.loaderService.getBittrexData();
+        long start = System.currentTimeMillis();
 
-		if (binanceQuote.get().isEmpty()) {
-			LOG.info("Reloading Binance data via temporary map.......");
-			binanceQuote = this.loaderService.getBinanceDataTemp();
-			assert !binanceQuote.get().isEmpty() : "Binance Resource Not Found";
-		}
-		if (piaQuote.get().isEmpty()) {
-			LOG.info("Reloading Cryptopia data via temporary map.......");
-			piaQuote = this.loaderService.getCryptopiaDataTemp();
-			assert !piaQuote.get().isEmpty() : "Cryptopia Resource Not Found";
-		}
-		if (bittrexQuote.get().isEmpty()) {
-			LOG.info("Reloading Bittrex data via temporary map.......");
-			bittrexQuote = this.loaderService.getBittrexDataTemp();
-			assert !bittrexQuote.get().isEmpty() : "Bittrex Resource Not Found";
-		}
+        Optional<Map<String, List<QuoteModel>>> binanceQuote = this.loaderService.getBinanceData();
+        Optional<Map<String, List<QuoteModel>>> piaQuote = this.loaderService.getCryptopiaData();
+        Optional<Map<String, List<QuoteModel>>> bittrexQuote = this.loaderService.getBittrexData();
 
-		// CompletableFuture.allOf(binanceQuote, piaQuote).join();
-		marketMap.put("marketdata_bi", binanceQuote.get());
-		marketMap.put("marketdata_pia", piaQuote.get());
-		marketMap.put("marketdata_bt", bittrexQuote.get());
+        if (binanceQuote.get().isEmpty()) {
+            LOG.info("Reloading Binance data via temporary map");
+            binanceQuote = this.loaderService.getBinanceDataTemp();
+            assert !binanceQuote.get().isEmpty() : "Binance Resource Not Found";
+        }
+        if (piaQuote.get().isEmpty()) {
+            LOG.info("Reloading Cryptopia data via temporary map");
+            piaQuote = this.loaderService.getCryptopiaDataTemp();
+            assert !piaQuote.get().isEmpty() : "Cryptopia Resource Not Found";
+        }
+        if (bittrexQuote.get().isEmpty()) {
+            LOG.info("Reloading Bittrex data via temporary map");
+            bittrexQuote = this.loaderService.getBittrexDataTemp();
+            assert !bittrexQuote.get().isEmpty() : "Bittrex Resource Not Found";
+        }
 
-		LOG.info("[GetMarkets] time taken to get data--->:" + (System.currentTimeMillis() - start));
+        // CompletableFuture.allOf(binanceQuote, piaQuote).join();
+        marketMap.put("marketdata_bi", binanceQuote.get());
+        marketMap.put("marketdata_pia", piaQuote.get());
+        marketMap.put("marketdata_bt", bittrexQuote.get());
 
-		return new ResponseEntity<>(marketMap, HttpStatus.OK);
-	}
+        LOG.info("[GetMarkets] time taken to get data--->:" + (System.currentTimeMillis() - start));
 
-	@RequestMapping(value = "/loaders", method = RequestMethod.GET)
-	public ResponseEntity<?> runLoaders() {
-		try {
-			this.loaderService.loadBinanceData();
-			this.loaderService.loadCryptopiaData();
-			this.loaderService.loadBittrexData();
+        return new ResponseEntity<>(marketMap, HttpStatus.OK);
+    }
 
-		} catch (Exception ex) {
-			LOG.debug("Exception while running loaders:", ex);
-			return new ResponseEntity<>("Data Loader failed", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+    @RequestMapping( value = "/loaders", method = RequestMethod.GET )
+    public ResponseEntity<?> runLoaders()
+    {
+        long start = System.currentTimeMillis();
+        try {
+            this.loaderService.loadBinanceData();
+            this.loaderService.loadCryptopiaData();
+            this.loaderService.loadBittrexData();
+            this.loaderService.loadCoinMarketCapData();
 
-		return new ResponseEntity<>("completed", HttpStatus.OK);
-	}
+        } catch (Exception ex) {
+            LOG.debug("Exception while running loaders:", ex);
+            return new ResponseEntity<>("Data Loader failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        System.out.println("[GetMarkets] time taken to get data--->:" + (System.currentTimeMillis() - start));
+        return new ResponseEntity<>("completed", HttpStatus.OK);
+    }
 
-	@RequestMapping(value = "/loadNews", method = RequestMethod.GET)
-	public ResponseEntity<?> loadNews() {
-		Optional<Map<String, News>> newsMap = newsService.setNews();
-		return newsMap.get().isEmpty()
-				? new ResponseEntity<String>("News Loader failed", HttpStatus.INTERNAL_SERVER_ERROR)
-				: new ResponseEntity<String>("News Loaded", HttpStatus.OK);
-
-	}
 }

@@ -27,16 +27,16 @@ public class NewsService
         this.config = Objects.requireNonNull(config);
     }
 
-    public Optional<Map<String, News>> setNews()
+    public Map<String, News> getNews()
     {
         try {
             News news = Util.parseJsonFromUrl(this.config.getNewsApiUrl(), News.class);
             newsMap.put("news", news);
             newsMapTemp.put("news", news);
         } catch (Exception ex) {
-            LOG.debug("Cannot parse news json --------:" + ex);
+            LOG.debug("[NewsService][setNews] Cannot parse news json:" + ex);
         }
-        return Optional.ofNullable(newsMap);
+        return newsMap;
     }
 
     public Optional<Map<String, News>> getNewsMap()

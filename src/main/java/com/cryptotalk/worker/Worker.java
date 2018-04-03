@@ -1,27 +1,19 @@
 package com.cryptotalk.worker;
 
 import static java.util.stream.IntStream.range;
-
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Component;
-
-import com.cryptotalk.exchanges.Drivers;
-import com.cryptotalk.exchanges.Exchanges;
 import com.cryptotalk.models.QuoteModel;
 import com.cryptotalk.service.DataLoaderService;
 import com.cryptotalk.util.AppConfig;
 import com.cryptotalk.util.Util;
+import com.cryyptotalk.generated.Binance;
 import com.cryyptotalk.generated.Bittrex;
+import com.cryyptotalk.generated.CoinMarketCap;
 import com.cryyptotalk.generated.Cryptopia;
 
 @Component
@@ -32,7 +24,6 @@ public class Worker
     private final List<QuoteModel> bittrexList = new LinkedList<>();
 
     private final AppConfig config;
-    private WebDriver driver = null;
     private static final Logger LOG = LogManager.getLogger(DataLoaderService.class);
 
     public Worker(AppConfig config)
@@ -40,43 +31,43 @@ public class Worker
         this.config = Objects.requireNonNull(config);
     }
 
+    public List<CoinMarketCap> coinMarketCapWorker()
+    {
+        try {
+            
+            List<CoinMarketCap> coinMarketCap =
+                Util.parseJsonArrayFromUrl(this.config.getCoinMarketCapApi(), CoinMarketCap.class);
+            return coinMarketCap;
+
+        } catch (Exception ex) {
+            LOG.debug("[Worker][CoinMarketCap] Cannot parse coin market cap json" + ex);
+        }
+        return null;
+    }
+
     public List<QuoteModel> binanceWorker()
     {
-        String driverProperty = Drivers.CHROME_PROPERTY.getValue();
-        String driverExe = Drivers.CHROME_EXE.getValue();
-        String exchangeName = Exchanges.BINANCE.getValue();
-        String tableId = Exchanges.BINANCE_TABLE_ID.getValue();
-        String xpath = Exchanges.BINANCE_XPATH.getValue();
 
         try {
-            ClassLoader loader = getClass().getClassLoader();
-            File file = new File(Objects.requireNonNull(loader.getResource(driverExe)).getFile());
-            System.setProperty(driverProperty, file.getAbsolutePath());
-            driver = new ChromeDriver();
-            driver.get(exchangeName);
-            WebElement table_element = driver.findElement(By.id(tableId));
-            List<WebElement> tr_collection = table_element.findElements(By.xpath(xpath));
-            binanceList.clear();
-            int bound = tr_collection.size();
-            range(1, bound).filter(j -> !tr_collection.get(j).getText().isEmpty()).forEach(j -> {
-                QuoteModel model = new QuoteModel();
-                String DELIMITER = " ";
-                model.setTicker(tr_collection.get(j).getText().split(DELIMITER)[0]);
-                model.setPrice(tr_collection.get(j).getText().split(DELIMITER)[1]
-                        + tr_collection.get(j).getText().split(DELIMITER)[2]
-                        + tr_collection.get(j).getText().split(DELIMITER)[3]);
-                model.setChange24h(tr_collection.get(j).getText().split(DELIMITER)[4]);
-                model.setHigh24hr(tr_collection.get(j).getText().split(DELIMITER)[5]);
-                model.setLow24h(tr_collection.get(j).getText().split(DELIMITER)[6]);
-                model.setVolume(tr_collection.get(j).getText().split(DELIMITER)[7]);
-                binanceList.add(model);
-            });
-        } catch (Exception ex) {
-            LOG.debug("[Worker]Cannot get data from binance --------:" + ex);
-        } finally {
+            List<Binance> market = Util.parseJsonArrayFromUrl(this.config.getBinanceApi(), Binance.class);
 
-            driver.close();
-            driver.quit();
+            binanceList.clear();
+            int bound = market.size();
+            range(0, bound).forEach((int i) -> {
+                QuoteModel model = new QuoteModel();
+                if (market.get(i).getSymbol().endsWith("BTC")) {
+                    model.setTicker(market.get(i).getSymbol());
+                    model.setPrice(market.get(i).getLastPrice());
+                    model.setChange24h(market.get(i).getPriceChangePercent());
+                    model.setHigh24hr(market.get(i).getHighPrice());
+                    model.setLow24h(market.get(i).getLowPrice());
+                    model.setVolume(market.get(i).getVolume());
+                    binanceList.add(model);
+                }
+            });
+
+        } catch (Exception ex) {
+            LOG.debug("[Worker][BinanceWorker] Cannot parse binance json" + ex);
         }
         return binanceList;
     }
@@ -99,7 +90,7 @@ public class Worker
             });
 
         } catch (Exception ex) {
-            LOG.debug("[Worker]Cannot parse cryptopia json --------:" + ex);
+            LOG.debug("[Worker] [CryptopiaWorker] Cannot parse cryptopia" + ex);
         }
         return piaList;
     }
@@ -127,7 +118,7 @@ public class Worker
             });
 
         } catch (Exception ex) {
-            LOG.debug("[Worker] Cannot parse bittrex json --------:" + ex);
+            LOG.debug("[Worker] [BittrexWorker] Cannot parse bittrex json" + ex);
         }
         return bittrexList;
     }
