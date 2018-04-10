@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.cryptotalk.models.QuoteModel;
 import com.cryptotalk.service.DataLoaderService;
+import com.cryptotalk.service.LoadersFacade;
 import com.cryyptotalk.generated.CoinMarketCap;
 
 @RestController
@@ -23,10 +24,12 @@ public class MarketController
     // private DataLoaderService loaderService;
 
     private final DataLoaderService loaderService;
+    private final LoadersFacade facade;
 
-    public MarketController(DataLoaderService loaderService)
+    public MarketController(DataLoaderService loaderService, LoadersFacade facade)
     {
         this.loaderService = loaderService;
+        this.facade = facade;
     }
 
     private static final Logger LOG = LogManager.getLogger(MarketController.class);
@@ -92,19 +95,11 @@ public class MarketController
     @RequestMapping( value = "/loaders", method = RequestMethod.GET )
     public ResponseEntity<?> runLoaders()
     {
-        long start = System.currentTimeMillis();
-        try {
-            this.loaderService.loadBinanceData();
-            this.loaderService.loadCryptopiaData();
-            this.loaderService.loadBittrexData();
-            this.loaderService.loadCoinMarketCapData();
-
-        } catch (Exception ex) {
-            LOG.debug("Exception while running loaders:", ex);
-            return new ResponseEntity<>("Data Loader failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        int rows = this.facade.runLoaders();
+        if (rows == 0) {
+            return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        System.out.println("[GetMarkets] time taken to get data--->:" + (System.currentTimeMillis() - start));
-        return new ResponseEntity<>("completed", HttpStatus.OK);
+        return new ResponseEntity<>("completed with " + rows, HttpStatus.OK);
     }
 
 }
